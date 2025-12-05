@@ -1,0 +1,41 @@
+﻿@page "/login"
+@using System.Text.Json
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h3>Login</h3>
+
+<input @bind="Username" placeholder="Username" />
+<input @bind="Password" placeholder="Password" type="password" />
+<button @onclick="LoginAsync">Login</button>
+
+@code {
+    private string Username = "";
+    private string Password = "";
+    private string? Error;
+
+    private async Task LoginAsync()
+    {
+        var request = new { Username, Password };
+        var response = await Http.PostAsJsonAsync("api/auth/login", request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+            var token = json.GetProperty("token").GetString();
+
+            if (token is not null)
+            {
+                await LocalStorage.SetItemAsync("authToken", token);
+                Http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                Nav.NavigateTo("/");
+            }
+        }
+        else
+        {
+            Error = "Invalid username or password";
+        }
+    }
+}

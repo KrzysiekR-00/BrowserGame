@@ -1,0 +1,142 @@
+﻿@page "/attributes"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h3>Attributes</h3>
+
+<table class="table">
+    <tbody>
+        @foreach (var attr in attributes.Values)
+        {
+            <tr>
+                <td>@attr.Key.ToString()</td>
+                <td>@attr.Value</td>
+                <td>
+                    <button class="btn btn-primary"
+                            @onclick="() => Train(attr.Key)"
+                            disabled="@(!isInitialzed || scheduledTraining.Length > 0)">
+                        +
+                    </button>
+                </td>
+                @if (isInitialzed && scheduledTraining.Length > 0)
+                {
+                    if (scheduledTraining.Any(s => s.AttributeId == (int)attr.Key))
+                    {
+                        <td>Remaining: @remaining.ToString(@"hh\:mm\:ss")</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                @* @if (isInitialzed && scheduledTraining.Length <= 0)
+                {
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => Train(attr.Key)">+</button>
+                    </td>
+                }
+                else
+                {
+                    <td>@scheduledTraining.FirstOrDefault(s => s.AttributeId == (int)attr.Key)?.ExecuteAt.ToString()</td>
+                } *@
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    private Shared.Characters.AttributesDTO attributes = new Shared.Characters.AttributesDTO();
+    private Shared.Characters.CharacterScheduledTraining[] scheduledTraining = Array.Empty<Shared.Characters.CharacterScheduledTraining>();
+
+    private bool isInitialzed = false;
+
+    TimeSpan remaining;
+    System.Timers.Timer timer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await LocalStorage.GetItemAsync<string>("authToken");
+            Http.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            scheduledTraining = await Http.GetFromJsonAsync<Shared.Characters.CharacterScheduledTraining[]>("api/training/scheduledTraining");
+
+            attributes = await Http.GetFromJsonAsync<Shared.Characters.AttributesDTO>("api/attributes/attributes");
+
+            UpdateTimer();
+
+            isInitialzed = true;
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    private async Task Train(Shared.Characters.Attribute attribute)
+    {
+        //attributes.Values[attribute] += 1;
+
+        Console.WriteLine(attribute);
+
+        var token = await LocalStorage.GetItemAsync<string>("authToken");
+        Http.DefaultRequestHeaders.Authorization =
+        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var response = await Http.PostAsJsonAsync("api/training/train", attribute);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var training = await response.Content.ReadFromJsonAsync<Shared.Characters.CharacterScheduledTraining>();
+
+            scheduledTraining = new Shared.Characters.CharacterScheduledTraining[] { training };
+
+            UpdateTimer();
+        }
+    }
+
+    private void UpdateTimer()
+    {
+        if (scheduledTraining.Length > 0)
+        {
+            remaining = UpdateRemainingTime();
+
+            timer = new System.Timers.Timer(1000);
+            timer.Elapsed += (s, e) =>
+            {
+                remaining = UpdateRemainingTime();
+
+                if (remaining <= TimeSpan.Zero)
+                    timer.Stop();
+
+                InvokeAsync(StateHasChanged);
+            };
+            timer.Start();
+        }
+    }
+
+    private TimeSpan UpdateRemainingTime()
+    {
+        if (DateTime.UtcNow >= scheduledTraining[0].ExecuteAt)
+        {
+            return TimeSpan.Zero;
+        }
+        else
+        {
+            return scheduledTraining[0].ExecuteAt - DateTime.UtcNow;
+        }
+    }
+}
