@@ -1,0 +1,63 @@
+﻿@page "/usersList"
+@using Shared.Accounts
+@using System.Text.Json
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager Nav
+
+<h3>UsersList</h3>
+
+@if (users is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p><em>@currentUsername</em></p>
+    <button @onclick="LogoutAsync">Logout</button>
+
+    <ul>
+        @foreach (var p in users)
+        {
+            <li>@p.Username - @p.PasswordHash</li>
+        }
+    </ul>
+}
+
+@code {
+    private UserDTO[]? users;
+
+    private string? currentUsername = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await LocalStorage.GetItemAsync<string>("authToken");
+            Http.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await Http.GetFromJsonAsync<JsonElement>("api/auth/profile");
+            Console.WriteLine(response.GetRawText());
+            currentUsername = response.GetProperty("username").GetString();
+        }
+        catch(Exception e)
+        {
+            currentUsername = e.Message + Environment.NewLine + e.StackTrace;
+        }
+
+        users = await Http.GetFromJsonAsync<UserDTO[]>("api/auth");
+    }
+
+    private async Task LogoutAsync()
+    {
+        try
+        {
+            await LocalStorage.RemoveItemAsync("authToken");
+            Nav.NavigateTo("/");
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+}

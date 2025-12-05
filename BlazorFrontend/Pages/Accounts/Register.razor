@@ -1,0 +1,70 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using Shared.Accounts
+@inject HttpClient Http
+
+<PageTitle>Register</PageTitle>
+
+<h1>Register</h1>
+
+<EditForm Model="@registerData" OnValidSubmit="RegisterAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Login:</label>
+        <InputText @bind-Value="registerData.Username" class="form-control" />
+        <ValidationMessage For="@(() => registerData.Username)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Hasło:</label>
+        <InputText @bind-Value="registerData.Password" type="password" class="form-control" />
+        <ValidationMessage For="@(() => registerData.Password)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Powtórz hasło:</label>
+        <InputText @bind-Value="registerData.ConfirmPassword" type="password" class="form-control" />
+        <ValidationMessage For="@(() => registerData.ConfirmPassword)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zarejestruj</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-info mt-3">@message</div>
+}
+
+@code {
+    private RegisterRequest registerData = new();
+    private string? message;
+
+    private async Task RegisterAsync()
+    {
+        //message = "Błąd";
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerData);
+            message = await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            message = $"Błąd: {ex.Message}";
+        }
+    }
+
+    // public class RegisterRequest
+    // {
+    //     [Required]
+    //     public string Username { get; set; } = "";
+
+    //     [Required, MinLength(6)]
+    //     public string Password { get; set; } = "";
+
+    //     [Required, Compare(nameof(Password))]
+    //     public string ConfirmPassword { get; set; } = "";
+    // }
+}
