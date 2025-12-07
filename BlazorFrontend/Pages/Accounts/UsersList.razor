@@ -18,7 +18,9 @@ else
     <AuthorizeView>
         <Authorized>
             <p><em>@currentUsername</em></p>
-            <p><em>@context.User.Identity.Name!</em></p>
+            <p><em>@context.User.Identity.Name</em></p>
+            <p><em>@context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value</em></p>
+            <p><em>@DateTimeOffset.FromUnixTimeSeconds(long.Parse(context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value))</em></p>
             <button @onclick="LogoutAsync">Logout</button>
         </Authorized>
     </AuthorizeView>
@@ -44,9 +46,9 @@ else
         bool isLoggedIn = user.Identity?.IsAuthenticated ?? false;
         if (isLoggedIn)
         {
-            var token = await LocalStorage.GetItemAsync<string>("authToken");
-            Http.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //var token = await LocalStorage.GetItemAsync<string>("authToken");
+            //Http.DefaultRequestHeaders.Authorization =
+            //new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await Http.GetFromJsonAsync<JsonElement>("api/auth/profile");
             Console.WriteLine(response.GetRawText());
             currentUsername = response.GetProperty("username").GetString();
