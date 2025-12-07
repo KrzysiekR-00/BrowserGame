@@ -65,9 +65,9 @@
     {
         try
         {
-            var token = await LocalStorage.GetItemAsync<string>("authToken");
-            Http.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //var token = await LocalStorage.GetItemAsync<string>("authToken");
+            //Http.DefaultRequestHeaders.Authorization =
+            //new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             scheduledTraining = await Http.GetFromJsonAsync<Shared.Characters.CharacterScheduledTraining[]>("api/training/scheduledTraining");
 
@@ -94,9 +94,9 @@
 
         Console.WriteLine(attribute);
 
-        var token = await LocalStorage.GetItemAsync<string>("authToken");
-        Http.DefaultRequestHeaders.Authorization =
-        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        //var token = await LocalStorage.GetItemAsync<string>("authToken");
+        //Http.DefaultRequestHeaders.Authorization =
+        //new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
         var response = await Http.PostAsJsonAsync("api/training/train", attribute);
 
