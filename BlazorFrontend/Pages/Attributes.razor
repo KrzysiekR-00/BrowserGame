@@ -1,4 +1,6 @@
 ﻿@page "/attributes"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 

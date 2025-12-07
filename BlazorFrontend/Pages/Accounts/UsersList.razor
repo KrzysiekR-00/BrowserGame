@@ -1,9 +1,11 @@
 ﻿@page "/usersList"
+@using Microsoft.AspNetCore.Components.Authorization
 @using Shared.Accounts
 @using System.Text.Json
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Nav
+@inject CustomAuthStateProvider CustomAuthStateProvider
 
 <h3>UsersList</h3>
 
@@ -13,8 +15,13 @@
 }
 else
 {
-    <p><em>@currentUsername</em></p>
-    <button @onclick="LogoutAsync">Logout</button>
+    <AuthorizeView>
+        <Authorized>
+            <p><em>@currentUsername</em></p>
+            <p><em>@context.User.Identity.Name!</em></p>
+            <button @onclick="LogoutAsync">Logout</button>
+        </Authorized>
+    </AuthorizeView>
 
     <ul>
         @foreach (var p in users)
@@ -31,7 +38,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        var authState = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        bool isLoggedIn = user.Identity?.IsAuthenticated ?? false;
+        if (isLoggedIn)
         {
             var token = await LocalStorage.GetItemAsync<string>("authToken");
             Http.DefaultRequestHeaders.Authorization =
@@ -39,10 +50,6 @@ else
             var response = await Http.GetFromJsonAsync<JsonElement>("api/auth/profile");
             Console.WriteLine(response.GetRawText());
             currentUsername = response.GetProperty("username").GetString();
-        }
-        catch(Exception e)
-        {
-            currentUsername = e.Message + Environment.NewLine + e.StackTrace;
         }
 
         users = await Http.GetFromJsonAsync<UserDTO[]>("api/auth");
@@ -53,6 +60,7 @@ else
         try
         {
             await LocalStorage.RemoveItemAsync("authToken");
+            CustomAuthStateProvider.NotifyUserLogout();
             Nav.NavigateTo("/");
         }
         catch(Exception e)

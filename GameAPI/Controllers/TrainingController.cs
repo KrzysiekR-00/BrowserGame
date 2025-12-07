@@ -1,4 +1,5 @@
 ﻿using GameAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Characters;
 
@@ -19,6 +20,7 @@ public class TrainingController : ControllerBase
         _trainingService = trainingService;
     }
 
+    [Authorize]
     [HttpPost("train")]
     public ActionResult<CharacterScheduledTraining> Train([FromBody] Shared.Characters.Attribute attribute)
     {
@@ -42,6 +44,7 @@ public class TrainingController : ControllerBase
         return Ok(scheduled);
     }
 
+    [Authorize]
     [HttpGet("scheduledTraining")]
     public ActionResult<CharacterScheduledTraining[]> ScheduledTraining()
     {

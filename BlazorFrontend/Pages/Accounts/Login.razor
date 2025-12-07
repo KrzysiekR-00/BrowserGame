@@ -3,6 +3,7 @@
 @inject HttpClient Http
 @inject NavigationManager Nav
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject CustomAuthStateProvider CustomAuthStateProvider
 
 <h3>Login</h3>
 
@@ -28,8 +29,9 @@
             if (token is not null)
             {
                 await LocalStorage.SetItemAsync("authToken", token);
-                Http.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                //Http.DefaultRequestHeaders.Authorization =
+                //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                CustomAuthStateProvider.NotifyUserAuthentication(token);
                 Nav.NavigateTo("/");
             }
         }
