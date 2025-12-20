@@ -1,0 +1,65 @@
+﻿@page "/gameState"
+@using BlazorFrontend.Pages.Accounts
+@using Microsoft.AspNetCore.Authorization
+@using Shared.State
+@attribute [Authorize]
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject CustomAuthStateProvider CustomAuthStateProvider
+
+<h3>GameState</h3>
+
+@if (gameState is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p><em>@gameState.Type</em></p>
+
+    <ul>
+        @foreach (var p in @gameState.AvailableActions)
+        {
+            <li>@p.Id - @p.Description</li>
+        }
+    </ul>
+
+    @switch (gameState.Context)
+    {
+        case CombatContext combat:
+            <p>combat</p>
+            <button>@combat.Test</button>
+            break;
+
+        case QuestChoiceContext questChoice:
+            <p>questChoice</p>
+            <button>@questChoice.Test</button>
+            break;
+
+        case QuestResultContext result:
+            <p>result</p>
+            <button>@result.Test</button>
+            break;
+
+        default:
+            <p>Nieznany stan gry</p>
+            break;
+    }
+}
+
+@code {
+    private GameStateDto? gameState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await CustomAuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        bool isLoggedIn = user.Identity?.IsAuthenticated ?? false;
+        if (isLoggedIn)
+        {
+            var response = await Http.GetFromJsonAsync<GameStateDto>("api/gameState/gameState");
+            gameState = response;
+        }
+    }
+}
