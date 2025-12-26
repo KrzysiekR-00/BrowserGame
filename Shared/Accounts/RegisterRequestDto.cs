@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Shared.Accounts;
-public class RegisterRequest
+public class RegisterRequestDto
 {
     [Required]
     public string Username { get; set; } = "";

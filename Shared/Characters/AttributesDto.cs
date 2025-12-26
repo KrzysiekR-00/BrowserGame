@@ -1,8 +1,8 @@
 ﻿namespace Shared.Characters;
 
-public class AttributesDTO
+public class AttributesDto
 {
-    public Dictionary<Attribute, int> Values { get; set; } = new Dictionary<Attribute, int>();
+    public Dictionary<AttributeDto, int> Values { get; set; } = new Dictionary<AttributeDto, int>();
 }
 
 //public readonly record struct Attributes(

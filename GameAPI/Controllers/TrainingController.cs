@@ -22,7 +22,7 @@ public class TrainingController : ControllerBase
 
     [Authorize]
     [HttpPost("train")]
-    public ActionResult<CharacterScheduledTraining> Train([FromBody] Shared.Characters.Attribute attribute)
+    public ActionResult<CharacterScheduledTrainingDto> Train([FromBody] Shared.Characters.AttributeDto attribute)
     {
         var username = User.Identity?.Name;
         var user = _userService.GetByUsername(username);
@@ -46,7 +46,7 @@ public class TrainingController : ControllerBase
 
     [Authorize]
     [HttpGet("scheduledTraining")]
-    public ActionResult<CharacterScheduledTraining[]> ScheduledTraining()
+    public ActionResult<CharacterScheduledTrainingDto[]> ScheduledTraining()
     {
         var username = User.Identity?.Name;
         var user = _userService.GetByUsername(username);

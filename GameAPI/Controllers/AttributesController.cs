@@ -22,7 +22,7 @@ public class AttributesController : ControllerBase
 
     [Authorize]
     [HttpGet("attributes")]
-    public ActionResult<AttributesDTO> GetAttributes()
+    public ActionResult<AttributesDto> GetAttributes()
     {
         var username = User.Identity?.Name;
         var user = _userService.GetByUsername(username);

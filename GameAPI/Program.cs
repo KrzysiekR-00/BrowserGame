@@ -12,6 +12,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<CharacterAttributesService>();
 builder.Services.AddScoped<TrainingService>();
+builder.Services.AddScoped<GameStateService>();
 
 builder.Services.AddHostedService<ScheduledTrainingWorker>();
 

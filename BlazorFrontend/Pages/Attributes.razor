@@ -53,8 +53,8 @@
 
 @code {
 
-    private Shared.Characters.AttributesDTO attributes = new Shared.Characters.AttributesDTO();
-    private Shared.Characters.CharacterScheduledTraining[] scheduledTraining = Array.Empty<Shared.Characters.CharacterScheduledTraining>();
+    private Shared.Characters.AttributesDto attributes = new Shared.Characters.AttributesDto();
+    private Shared.Characters.CharacterScheduledTrainingDto[] scheduledTraining = Array.Empty<Shared.Characters.CharacterScheduledTrainingDto>();
 
     private bool isInitialzed = false;
 
@@ -69,9 +69,9 @@
             //Http.DefaultRequestHeaders.Authorization =
             //new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            scheduledTraining = await Http.GetFromJsonAsync<Shared.Characters.CharacterScheduledTraining[]>("api/training/scheduledTraining");
+            scheduledTraining = await Http.GetFromJsonAsync<Shared.Characters.CharacterScheduledTrainingDto[]>("api/training/scheduledTraining");
 
-            attributes = await Http.GetFromJsonAsync<Shared.Characters.AttributesDTO>("api/attributes/attributes");
+            attributes = await Http.GetFromJsonAsync<Shared.Characters.AttributesDto>("api/attributes/attributes");
 
             UpdateTimer();
 
@@ -88,7 +88,7 @@
         timer?.Dispose();
     }
 
-    private async Task Train(Shared.Characters.Attribute attribute)
+    private async Task Train(Shared.Characters.AttributeDto attribute)
     {
         //attributes.Values[attribute] += 1;
 
@@ -102,9 +102,9 @@
 
         if (response.IsSuccessStatusCode)
         {
-            var training = await response.Content.ReadFromJsonAsync<Shared.Characters.CharacterScheduledTraining>();
+            var training = await response.Content.ReadFromJsonAsync<Shared.Characters.CharacterScheduledTrainingDto>();
 
-            scheduledTraining = new Shared.Characters.CharacterScheduledTraining[] { training };
+            scheduledTraining = new Shared.Characters.CharacterScheduledTrainingDto[] { training };
 
             UpdateTimer();
         }

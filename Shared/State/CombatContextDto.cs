@@ -1,5 +1,5 @@
 ﻿namespace Shared.State;
-public class CombatContext : GameStateContext
+public class CombatContextDto : GameStateContextDto
 {
     public string Test { get; init; } = "test2";
 }

@@ -15,11 +15,11 @@ public class TrainingService
         _characterAttributesService = characterAttributesService;
     }
 
-    internal CharacterScheduledTraining[] GetScheduledTraining(int characterId)
+    internal CharacterScheduledTrainingDto[] GetScheduledTraining(int characterId)
     {
         var scheduled = _db.ScheduledAttributeChanges.Where(s => s.CharacterId == characterId).ToArray();
         return scheduled
-            .Select(s => new CharacterScheduledTraining
+            .Select(s => new CharacterScheduledTrainingDto
             {
                 AttributeChange = s.AttributeChange,
                 AttributeId = s.AttributeId,
@@ -28,7 +28,7 @@ public class TrainingService
             .ToArray();
     }
 
-    internal CharacterScheduledTraining StartTraining(Shared.Characters.Attribute attribute, int characterId)
+    internal CharacterScheduledTrainingDto StartTraining(Shared.Characters.AttributeDto attribute, int characterId)
     {
         var scheduledTraining = GetScheduledTraining(characterId);
         if (scheduledTraining.Length > 0)

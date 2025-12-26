@@ -14,4 +14,5 @@ public class AppDbContext : DbContext
     public DbSet<Character> Characters => Set<Character>();
     public DbSet<CharacterAttribute> CharactersAttributes => Set<CharacterAttribute>();
     public DbSet<ScheduledAttributeChange> ScheduledAttributeChanges => Set<ScheduledAttributeChange>();
+    public DbSet<CharacterState> CharactersStates => Set<CharacterState>();
 }
