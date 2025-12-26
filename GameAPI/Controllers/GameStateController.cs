@@ -11,11 +11,13 @@ public class GameStateController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly CharacterService _characterService;
+    private readonly GameStateService _gameService;
 
-    public GameStateController(UserService userService, CharacterService characterService)
+    public GameStateController(UserService userService, CharacterService characterService, GameStateService gameService)
     {
         _userService = userService;
         _characterService = characterService;
+        _gameService = gameService;
     }
 
     [Authorize]
@@ -37,14 +39,23 @@ public class GameStateController : ControllerBase
             return Problem("Character not found");
         }
 
+        //var gameState = new GameStateDto
+        //{
+        //    Type = "QUEST_CHOICE",
+        //    Context = new QuestChoiceContextDto()
+        //};
+
+        //gameState.AvailableActions.Add(new ActionDto { Id = 1, Description = "decision 1" });
+        //gameState.AvailableActions.Add(new ActionDto { Id = 2, Description = "decision 2" });
+
+        var state = _gameService.GetState(character.Id);
+
         var gameState = new GameStateDto
         {
             Type = "QUEST_CHOICE",
-            Context = new QuestChoiceContext()
+            Context = new QuestChoiceContextDto(),
+            AvailableActions = state.AvailableActions
         };
-
-        gameState.AvailableActions.Add(new ActionDto { Id = 1, Description = "decision 1" });
-        gameState.AvailableActions.Add(new ActionDto { Id = 2, Description = "decision 2" });
 
         return Ok(gameState);
     }

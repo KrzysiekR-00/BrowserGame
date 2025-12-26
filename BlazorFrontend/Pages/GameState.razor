@@ -26,17 +26,17 @@ else
 
     @switch (gameState.Context)
     {
-        case CombatContext combat:
+        case CombatContextDto combat:
             <p>combat</p>
             <button>@combat.Test</button>
             break;
 
-        case QuestChoiceContext questChoice:
+        case QuestChoiceContextDto questChoice:
             <p>questChoice</p>
             <button>@questChoice.Test</button>
             break;
 
-        case QuestResultContext result:
+        case QuestResultContextDto result:
             <p>result</p>
             <button>@result.Test</button>
             break;

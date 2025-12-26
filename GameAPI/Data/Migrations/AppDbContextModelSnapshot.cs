@@ -58,6 +58,28 @@ namespace GameAPI.Data.Migrations
                     b.ToTable("CharactersAttributes");
                 });
 
+            modelBuilder.Entity("GameAPI.Models.CharacterState", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CharacterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StateJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StateType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CharactersStates");
+                });
+
             modelBuilder.Entity("GameAPI.Models.ScheduledAttributeChange", b =>
                 {
                     b.Property<int>("Id")

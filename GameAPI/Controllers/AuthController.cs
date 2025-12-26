@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterRequest request)
+    public IActionResult Register([FromBody] RegisterRequestDto request)
     {
         if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             return BadRequest("Login i hasło są wymagane.");
@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login(LoginRequest request)
+    public IActionResult Login(LoginRequestDto request)
     {
         var user = _userService.GetByUsername(request.Username);
         if (user == null || !_userService.VerifyPassword(user, request.Password))

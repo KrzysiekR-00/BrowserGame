@@ -1,5 +1,5 @@
 ﻿namespace Shared.Characters;
-public class CharacterScheduledTraining
+public class CharacterScheduledTrainingDto
 {
     public int AttributeId { get; set; }
     public int AttributeChange { get; set; }

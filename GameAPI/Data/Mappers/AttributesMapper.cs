@@ -5,11 +5,11 @@ namespace GameAPI.Data.Mappers;
 
 internal static class AttributesMapper
 {
-    internal static AttributesDTO ToAttributesDTO(this CharacterAttribute[] characterAttributes)
+    internal static AttributesDto ToAttributesDTO(this CharacterAttribute[] characterAttributes)
     {
-        var dto = new AttributesDTO();
+        var dto = new AttributesDto();
 
-        var attributes = Enum.GetValues<Shared.Characters.Attribute>();
+        var attributes = Enum.GetValues<Shared.Characters.AttributeDto>();
         foreach (var attribute in attributes)
         {
             var value = characterAttributes
@@ -22,7 +22,7 @@ internal static class AttributesMapper
         return dto;
     }
 
-    internal static IEnumerable<CharacterAttribute> ToCharacterAttributes(this AttributesDTO dto, int characterId)
+    internal static IEnumerable<CharacterAttribute> ToCharacterAttributes(this AttributesDto dto, int characterId)
     {
         foreach (var attribute in dto.Values)
         {

@@ -21,7 +21,7 @@ public class CharacterAttributesService
     //    return _db.CharactersAttributes.FirstOrDefault(u => u.CharacterId == userId)?.AttributesCsv.ToAttributes() ?? new Attributes();
     //}
 
-    public AttributesDTO GetAttributes(int characterId)
+    public AttributesDto GetAttributes(int characterId)
     {
         var characterAttributes = _db.CharactersAttributes
             .Where(u => u.CharacterId == characterId)
@@ -30,7 +30,7 @@ public class CharacterAttributesService
         return characterAttributes.ToAttributesDTO();
     }
 
-    public void SaveAttributes(AttributesDTO dto, int characterId)
+    public void SaveAttributes(AttributesDto dto, int characterId)
     {
         var characterAttributes = dto.ToCharacterAttributes(characterId).ToArray();
 
