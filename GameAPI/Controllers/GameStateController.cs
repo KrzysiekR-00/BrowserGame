@@ -59,4 +59,35 @@ public class GameStateController : ControllerBase
 
         return Ok(gameState);
     }
+
+    [Authorize]
+    [HttpPost("decision")]
+    public ActionResult<GameStateDto> Decide([FromBody] Guid guid)
+    {
+        var username = User.Identity?.Name;
+        var user = _userService.GetByUsername(username);
+
+        if (user == null)
+        {
+            return Problem("User not found");
+        }
+
+        var character = _characterService.GetByUserId(user.Id);
+
+        if (character == null)
+        {
+            return Problem("Character not found");
+        }
+
+        var newState = _gameService.ApplyDecision(character.Id, guid);
+
+        var gameState = new GameStateDto
+        {
+            Type = "QUEST_CHOICE",
+            Context = new QuestChoiceContextDto(),
+            AvailableActions = newState.AvailableActions
+        };
+
+        return Ok(gameState);
+    }
 }

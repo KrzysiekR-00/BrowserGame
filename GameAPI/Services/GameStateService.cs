@@ -21,21 +21,23 @@ public class GameStateService
         return JsonSerializer.Deserialize<GameStateContext>(entity.StateJson);
     }
 
-    //public GameState ApplyDecision(Guid playerId, GameDecision decision)
-    //{
-    //    var entity = _db.Set<PlayerStateEntity>()
-    //        .Single(x => x.PlayerId == playerId);
+    public GameStateContext ApplyDecision(int characterId, Guid decision)
+    {
+        var state = GetState(characterId);
 
-    //    var state = GameStateSerializer.Deserialize(entity.StateJson);
+        if (!state.AvailableActions.Any(a => a.Id == decision))
+        {
+            throw new ArgumentOutOfRangeException(nameof(decision));
+        }
 
-    //    var newState = state.Apply(decision);
+        var newState = state.Apply(decision);
 
-    //    entity.StateType = newState.Type;
-    //    entity.StateJson = GameStateSerializer.Serialize(newState);
-    //    entity.StateVersion++;
+        var stateEntity = _db.CharactersStates.FirstOrDefault(s => s.CharacterId == characterId);
 
-    //    _db.SaveChanges();
+        stateEntity.StateJson = JsonSerializer.Serialize<GameStateContext>(newState);
 
-    //    return newState;
-    //}
+        _db.SaveChanges();
+
+        return newState;
+    }
 }

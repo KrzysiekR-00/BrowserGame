@@ -1,4 +1,5 @@
-﻿using Shared.State;
+﻿using GameAPI.Domain.Quests;
+using Shared.State;
 using System.Text.Json.Serialization;
 
 namespace GameAPI.Domain;
@@ -12,7 +13,7 @@ public abstract class GameStateContext
     public abstract string Type { get; init; }
     //public GameStateContextDto Context { get; init; } = default!;
     public abstract List<ActionDto> AvailableActions { get; init; }
-    public abstract GameStateContext Apply(ActionDto decision);
+    public abstract GameStateContext Apply(Guid guid);
 }
 
 public class QuestChoiceContext : GameStateContext
@@ -20,8 +21,13 @@ public class QuestChoiceContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
-    public override GameStateContext Apply(ActionDto decision)
+    public override GameStateContext Apply(Guid guid)
     {
+        foreach (var action in AvailableActions)
+        {
+            action.Description += "a";
+        }
+
         return this;
     }
 
@@ -29,6 +35,13 @@ public class QuestChoiceContext : GameStateContext
     {
         Type = string.Empty;
         AvailableActions = new List<ActionDto>();
+
+        var availableQuests = new QuestsGenerator().GetAvailableQuests();
+
+        foreach (var quest in availableQuests)
+        {
+            AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = quest });
+        }
     }
 }
 public class CombatContext : GameStateContext
@@ -36,7 +49,7 @@ public class CombatContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
-    public override GameStateContext Apply(ActionDto decision)
+    public override GameStateContext Apply(Guid guid)
     {
         return this;
     }
@@ -52,7 +65,7 @@ public class QuestResultContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
-    public override GameStateContext Apply(ActionDto decision)
+    public override GameStateContext Apply(Guid guid)
     {
         return this;
     }
