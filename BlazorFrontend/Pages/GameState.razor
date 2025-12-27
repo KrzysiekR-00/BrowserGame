@@ -17,33 +17,33 @@ else
 {
     <p><em>@gameState.Type</em></p>
 
-    <ul>
-        @foreach (var p in @gameState.AvailableActions)
-        {
-            <li>@p.Id - @p.Description</li>
-        }
-    </ul>
-
     @switch (gameState.Context)
     {
         case CombatContextDto combat:
-            <p>combat</p>
-            <button>@combat.Test</button>
+            <p>state: combat</p>
+            <p>@combat.Test</p>
             break;
 
         case QuestChoiceContextDto questChoice:
-            <p>questChoice</p>
-            <button>@questChoice.Test</button>
+            <p>state: questChoice</p>
+            <p>@questChoice.Test</p>
             break;
 
         case QuestResultContextDto result:
-            <p>result</p>
-            <button>@result.Test</button>
+            <p>state: result</p>
+            <p>@result.Test</p>
             break;
 
         default:
             <p>Nieznany stan gry</p>
             break;
+    }
+
+    @foreach (var p in @gameState.AvailableActions)
+    {
+        <p>
+            <button class="btn btn-primary" @onclick="() => Decision(p.Id)">@p.Id - @p.Description</button>
+        </p>
     }
 }
 
@@ -60,6 +60,18 @@ else
         {
             var response = await Http.GetFromJsonAsync<GameStateDto>("api/gameState/gameState");
             gameState = response;
+        }
+    }
+
+    private async Task Decision(Guid decision)
+    {
+        var response = await Http.PostAsJsonAsync("api/gameState/decision", decision);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var newState = await response.Content.ReadFromJsonAsync<GameStateDto>();
+
+            gameState = newState;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace GameAPI.Domain;
+﻿namespace GameAPI.Domain.Quests;
 
 internal static class LocationsCollection
 {
