@@ -1,4 +1,5 @@
-﻿using GameAPI.Services;
+﻿using GameAPI.Domain;
+using GameAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.State;
@@ -39,21 +40,26 @@ public class GameStateController : ControllerBase
             return Problem("Character not found");
         }
 
-        //var gameState = new GameStateDto
-        //{
-        //    Type = "QUEST_CHOICE",
-        //    Context = new QuestChoiceContextDto()
-        //};
-
-        //gameState.AvailableActions.Add(new ActionDto { Id = 1, Description = "decision 1" });
-        //gameState.AvailableActions.Add(new ActionDto { Id = 2, Description = "decision 2" });
-
         var state = _gameService.GetState(character.Id);
+
+        GameStateContextDto context = null!;
+
+        switch (state)
+        {
+            case QuestChoiceContext:
+                context = new QuestChoiceContextDto() { Test1 = "Wybierz quest, który chcesz rozpocząć" };
+                break;
+            case CombatContext:
+                context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
+                break;
+            default:
+                throw new NotImplementedException();
+        }
 
         var gameState = new GameStateDto
         {
-            Type = "QUEST_CHOICE",
-            Context = new QuestChoiceContextDto(),
+            Type = state.Type,
+            Context = context,
             AvailableActions = state.AvailableActions
         };
 
@@ -81,10 +87,24 @@ public class GameStateController : ControllerBase
 
         var newState = _gameService.ApplyDecision(character.Id, guid);
 
+        GameStateContextDto context = null!;
+
+        switch (newState)
+        {
+            case QuestChoiceContext:
+                context = new QuestChoiceContextDto() { Test1 = "Wybierz quest, który chcesz rozpocząć" };
+                break;
+            case CombatContext:
+                context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
+                break;
+            default:
+                throw new NotImplementedException();
+        }
+
         var gameState = new GameStateDto
         {
-            Type = "QUEST_CHOICE",
-            Context = new QuestChoiceContextDto(),
+            Type = newState.Type,
+            Context = context,
             AvailableActions = newState.AvailableActions
         };
 

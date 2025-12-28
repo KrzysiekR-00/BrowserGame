@@ -21,6 +21,7 @@ public class QuestChoiceContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
+    [JsonInclude]
     internal Quest[] AvailableQuests { get; init; }
 
     public override GameStateContext Apply(Guid guid)
@@ -56,6 +57,7 @@ public class CombatContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
+    [JsonInclude]
     internal Quest Quest { get; }
 
     public override GameStateContext Apply(Guid guid)
@@ -63,6 +65,7 @@ public class CombatContext : GameStateContext
         return this;
     }
 
+    [JsonConstructor]
     internal CombatContext(Quest quest)
     {
         Type = string.Empty;
