@@ -1,41 +1,29 @@
-﻿@page "/usersList"
+﻿@page "/profile"
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Shared.Accounts
 @using System.Text.Json
+@attribute [Authorize]
 @inject HttpClient Http
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject NavigationManager Nav
 @inject CustomAuthStateProvider CustomAuthStateProvider
 
-<h3>UsersList</h3>
+<h3>Profile</h3>
 
-@if (users is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <AuthorizeView>
-        <Authorized>
-            <p><em>@currentUsername</em></p>
-            <p><em>@context.User.Identity.Name</em></p>
-            <p><em>@context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value</em></p>
-            <p><em>@DateTimeOffset.FromUnixTimeSeconds(long.Parse(context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value))</em></p>
-            <button @onclick="LogoutAsync">Logout</button>
-        </Authorized>
-    </AuthorizeView>
+<p><em>@currentUsername</em></p>
 
-    <ul>
-        @foreach (var p in users)
-        {
-            <li>@p.Username - @p.PasswordHash</li>
-        }
-    </ul>
-}
+<AuthorizeView>
+    <Authorized>
+        <p><em>@context.User.Identity.Name</em></p>
+        <p><em>@context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value</em></p>
+        <p><em>@DateTimeOffset.FromUnixTimeSeconds(long.Parse(context.User.Claims.FirstOrDefault(c => c.Type == "exp")?.Value))</em></p>
+    </Authorized>
+</AuthorizeView>
+
+<button class="btn btn-primary" @onclick="LogoutAsync">Logout</button>
 
 @code {
-    private UserDTO[]? users;
-
     private string? currentUsername = null;
 
     protected override async Task OnInitializedAsync()
@@ -46,15 +34,10 @@ else
         bool isLoggedIn = user.Identity?.IsAuthenticated ?? false;
         if (isLoggedIn)
         {
-            //var token = await LocalStorage.GetItemAsync<string>("authToken");
-            //Http.DefaultRequestHeaders.Authorization =
-            //new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await Http.GetFromJsonAsync<JsonElement>("api/auth/profile");
             Console.WriteLine(response.GetRawText());
             currentUsername = response.GetProperty("username").GetString();
         }
-
-        users = await Http.GetFromJsonAsync<UserDTO[]>("api/dev/users");
     }
 
     private async Task LogoutAsync()
@@ -65,7 +48,7 @@ else
             CustomAuthStateProvider.NotifyUserLogout();
             Nav.NavigateTo("/");
         }
-        catch(Exception e)
+        catch (Exception e)
         {
 
         }

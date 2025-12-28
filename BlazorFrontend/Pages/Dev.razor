@@ -1,0 +1,45 @@
+﻿@page "/dev"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Shared.Accounts
+@using System.Text.Json
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager Nav
+@inject CustomAuthStateProvider CustomAuthStateProvider
+
+<h3>UsersList</h3>
+
+@if (users is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var p in users)
+        {
+            <li>@p.Username - @p.PasswordHash</li>
+        }
+    </ul>
+}
+
+<button class="btn btn-primary" @onclick="ClearDatabase">Clear database</button>
+
+@code {
+    private UserDTO[]? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await Http.GetFromJsonAsync<UserDTO[]>("api/dev/users");
+    }
+
+    private async Task ClearDatabase()
+    {
+        var response = await Http.PostAsync("api/dev/clearDatabase", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            users = await Http.GetFromJsonAsync<UserDTO[]>("api/dev/users");
+        }
+    }
+}

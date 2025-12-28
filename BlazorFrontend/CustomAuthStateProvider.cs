@@ -1,4 +1,4 @@
-﻿namespace BlazorFrontend.Pages.Accounts;
+﻿namespace BlazorFrontend;
 
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
