@@ -48,6 +48,4 @@ public class UserService
         _db.Users.Add(user);
         _db.SaveChanges();
     }
-
-    public User[] GetUsers() => _db.Users.ToArray();
 }

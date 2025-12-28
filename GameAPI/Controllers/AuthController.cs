@@ -84,14 +84,4 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
-    [HttpGet]
-    public IEnumerable<UserDTO> Get()
-    {
-        return _userService.GetUsers().Select(u => new UserDTO()
-        {
-            Username = u.Username,
-            PasswordHash = u.PasswordHash
-        });
-    }
 }
