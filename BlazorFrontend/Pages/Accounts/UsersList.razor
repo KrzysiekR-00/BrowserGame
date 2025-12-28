@@ -54,7 +54,7 @@ else
             currentUsername = response.GetProperty("username").GetString();
         }
 
-        users = await Http.GetFromJsonAsync<UserDTO[]>("api/auth");
+        users = await Http.GetFromJsonAsync<UserDTO[]>("api/dev/users");
     }
 
     private async Task LogoutAsync()
