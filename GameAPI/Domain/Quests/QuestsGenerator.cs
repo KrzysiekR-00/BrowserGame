@@ -2,9 +2,9 @@
 
 internal class QuestsGenerator
 {
-    internal string[] GetAvailableQuests()
+    internal Quest[] GetAvailableQuests()
     {
-        List<string> availableQuests = new List<string>();
+        List<Quest> availableQuests = [];
 
         Random random = new();
 
@@ -13,13 +13,21 @@ internal class QuestsGenerator
             var randomLocation = LocationsCollection.Collection[
                 random.Next(0, LocationsCollection.Collection.Length)
                 ];
+
             var randomEnemy = EnemyCollection.Collection[
                 random.Next(0, EnemyCollection.Collection.Length)
                 ];
 
-            availableQuests.Add($"Exploration - {randomLocation} - {randomEnemy}");
+            var quest = new Quest()
+            {
+                Type = "Exploration",
+                Location = randomLocation,
+                Enemy = randomEnemy
+            };
+
+            availableQuests.Add(quest);
         }
 
-        return availableQuests.ToArray();
+        return [.. availableQuests];
     }
 }

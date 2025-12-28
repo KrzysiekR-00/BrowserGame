@@ -21,26 +21,33 @@ public class QuestChoiceContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
+    internal Quest[] AvailableQuests { get; init; }
+
     public override GameStateContext Apply(Guid guid)
     {
-        foreach (var action in AvailableActions)
-        {
-            action.Description += "a";
-        }
+        var choosenActionIndex = AvailableActions.IndexOf(AvailableActions.First(a => a.Id == guid));
 
-        return this;
+        var choosenQuest = AvailableQuests[choosenActionIndex];
+
+        return new CombatContext(choosenQuest);
     }
 
     public QuestChoiceContext()
     {
         Type = string.Empty;
-        AvailableActions = new List<ActionDto>();
+        AvailableActions = [];
 
-        var availableQuests = new QuestsGenerator().GetAvailableQuests();
+        AvailableQuests = new QuestsGenerator().GetAvailableQuests();
 
-        foreach (var quest in availableQuests)
+        foreach (var quest in AvailableQuests)
         {
-            AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = quest });
+            AvailableActions.Add(
+                new ActionDto
+                {
+                    Id = Guid.NewGuid(),
+                    Description = $"{quest.Type} - {quest.Location} - {quest.Enemy}"
+                }
+                );
         }
     }
 }
@@ -49,15 +56,22 @@ public class CombatContext : GameStateContext
     public override string Type { get; init; }
     public override List<ActionDto> AvailableActions { get; init; }
 
+    internal Quest Quest { get; }
+
     public override GameStateContext Apply(Guid guid)
     {
         return this;
     }
 
-    public CombatContext()
+    internal CombatContext(Quest quest)
     {
         Type = string.Empty;
-        AvailableActions = new List<ActionDto>();
+        AvailableActions = [];
+
+        Quest = quest;
+
+        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 1" });
+        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 2" });
     }
 }
 public class QuestResultContext : GameStateContext
@@ -73,6 +87,6 @@ public class QuestResultContext : GameStateContext
     public QuestResultContext()
     {
         Type = string.Empty;
-        AvailableActions = new List<ActionDto>();
+        AvailableActions = [];
     }
 }
