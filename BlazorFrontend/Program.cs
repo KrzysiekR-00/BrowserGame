@@ -1,6 +1,5 @@
 using Blazored.LocalStorage;
 using BlazorFrontend;
-using BlazorFrontend.Pages.Accounts;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

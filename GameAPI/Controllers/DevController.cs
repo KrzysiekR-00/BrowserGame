@@ -31,4 +31,23 @@ public class DevController : ControllerBase
             PasswordHash = u.PasswordHash
         }));
     }
+
+    [HttpPost("clearDatabase")]
+    public IActionResult ClearDatabase()
+    {
+        if (!_env.IsDevelopment())
+        {
+            return NotFound();
+        }
+
+        _db.Users.RemoveRange(_db.Users);
+        _db.Characters.RemoveRange(_db.Characters);
+        _db.CharactersAttributes.RemoveRange(_db.CharactersAttributes);
+        _db.ScheduledAttributeChanges.RemoveRange(_db.ScheduledAttributeChanges);
+        _db.CharactersStates.RemoveRange(_db.CharactersStates);
+
+        _db.SaveChanges();
+
+        return Ok();
+    }
 }
