@@ -19,21 +19,18 @@ else
 
     @switch (gameState.Context)
     {
-        case CombatContextDto combat:
-            <p>state: combat</p>
-            <p>@combat.Test</p>
-            break;
-
         case QuestChoiceContextDto questChoice:
             <p>state: questChoice</p>
-            <p>@questChoice.Test</p>
+            <p>@questChoice.Test1</p>
             break;
-
+        case CombatContextDto combat:
+            <p>state: combat</p>
+            <p>@combat.Test2</p>
+            break;
         case QuestResultContextDto result:
             <p>state: result</p>
-            <p>@result.Test</p>
+            <p>@result.Test3</p>
             break;
-
         default:
             <p>Nieznany stan gry</p>
             break;
