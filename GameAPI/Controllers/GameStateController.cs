@@ -1,4 +1,4 @@
-﻿using GameAPI.Domain;
+﻿using GameAPI.Data.Mappers;
 using GameAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,36 +42,14 @@ public class GameStateController : ControllerBase
 
         var state = _gameService.GetState(character.Id);
 
-        GameStateContextDto context = null!;
-
-        switch (state)
-        {
-            case QuestChoiceContext:
-                context = new QuestChoiceContextDto() { Test1 = "Wybierz quest, który chcesz rozpocząć" };
-                break;
-            case CombatContext:
-                context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
-                break;
-            case QuestResultContext:
-                context = new QuestResultContextDto() { Test3 = "Quest zakończony" };
-                break;
-            default:
-                throw new NotImplementedException();
-        }
-
-        var gameState = new GameStateDto
-        {
-            Type = state.Type,
-            Context = context,
-            AvailableActions = state.AvailableActions
-        };
+        var gameState = state.ToGameStateDTO();
 
         return Ok(gameState);
     }
 
     [Authorize]
     [HttpPost("decision")]
-    public ActionResult<GameStateDto> Decide([FromBody] Guid guid)
+    public ActionResult<GameStateDto> Decide([FromBody] DecisionRequestDto decisionRequestDto)
     {
         var username = User.Identity?.Name;
         var user = _userService.GetByUsername(username);
@@ -88,31 +66,9 @@ public class GameStateController : ControllerBase
             return Problem("Character not found");
         }
 
-        var newState = _gameService.ApplyDecision(character.Id, guid);
+        var newState = _gameService.ApplyDecision(character.Id, decisionRequestDto);
 
-        GameStateContextDto context = null!;
-
-        switch (newState)
-        {
-            case QuestChoiceContext:
-                context = new QuestChoiceContextDto() { Test1 = "Wybierz quest, który chcesz rozpocząć" };
-                break;
-            case CombatContext:
-                context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
-                break;
-            case QuestResultContext:
-                context = new QuestResultContextDto() { Test3 = "Quest zakończony" };
-                break;
-            default:
-                throw new NotImplementedException();
-        }
-
-        var gameState = new GameStateDto
-        {
-            Type = newState.Type,
-            Context = context,
-            AvailableActions = newState.AvailableActions
-        };
+        var gameState = newState.ToGameStateDTO();
 
         return Ok(gameState);
     }

@@ -1,5 +1,6 @@
 ﻿using GameAPI.Data;
 using GameAPI.Domain;
+using Shared.State;
 using System.Text.Json;
 
 namespace GameAPI.Services;
@@ -21,16 +22,17 @@ public class GameStateService
         return JsonSerializer.Deserialize<GameStateContext>(entity.StateJson);
     }
 
-    public GameStateContext ApplyDecision(int characterId, Guid decision)
+    public GameStateContext ApplyDecision(int characterId, DecisionRequestDto decisionRequestDto)
     {
         var state = GetState(characterId);
 
-        if (!state.AvailableActions.Any(a => a.Id == decision))
+        if (state.DecisionSlots.All(d => decisionRequestDto.ChosenActions.ContainsKey(d.Id)) ||
+           decisionRequestDto.ChosenActions.All(a => state.DecisionSlots.FirstOrDefault(d => d.Id == a.Key)?.AvailableActions.Any(aa => aa.Id == a.Value) == true))
         {
-            throw new ArgumentOutOfRangeException(nameof(decision));
+            throw new ArgumentOutOfRangeException(nameof(decisionRequestDto));
         }
 
-        var newState = state.Apply(decision);
+        var newState = state.Apply(decisionRequestDto.ChosenActions);
 
         var stateEntity = _db.CharactersStates.FirstOrDefault(s => s.CharacterId == characterId);
 

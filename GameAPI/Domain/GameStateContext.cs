@@ -11,22 +11,28 @@ namespace GameAPI.Domain;
 public abstract class GameStateContext
 {
     public abstract string Type { get; init; }
-    //public GameStateContextDto Context { get; init; } = default!;
-    public abstract List<ActionDto> AvailableActions { get; init; }
-    public abstract GameStateContext Apply(Guid guid);
+    public abstract List<DecisionSlotDto> DecisionSlots { get; init; }
+    public abstract GameStateContext Apply(Dictionary<Guid, Guid> chosenActions);
 }
 
 public class QuestChoiceContext : GameStateContext
 {
     public override string Type { get; init; }
-    public override List<ActionDto> AvailableActions { get; init; }
+    public override List<DecisionSlotDto> DecisionSlots { get; init; }
 
     [JsonInclude]
     internal Quest[] AvailableQuests { get; init; }
 
-    public override GameStateContext Apply(Guid guid)
+    public override GameStateContext Apply(Dictionary<Guid, Guid> chosenActions)
     {
-        var choosenActionIndex = AvailableActions.IndexOf(AvailableActions.First(a => a.Id == guid));
+        var chosenAction = chosenActions.First();
+
+        var availableActions = DecisionSlots
+            .First(d => d.Id == chosenAction.Key)
+            .AvailableActions;
+
+        var choosenActionIndex = availableActions
+            .IndexOf(availableActions.First(a => a.Id == chosenAction.Value));
 
         var choosenQuest = AvailableQuests[choosenActionIndex];
 
@@ -36,7 +42,8 @@ public class QuestChoiceContext : GameStateContext
     public QuestChoiceContext()
     {
         Type = string.Empty;
-        AvailableActions = [];
+
+        List<ActionDto> AvailableActions = [];
 
         AvailableQuests = new QuestsGenerator().GetAvailableQuests();
 
@@ -50,62 +57,72 @@ public class QuestChoiceContext : GameStateContext
                 }
                 );
         }
+
+        DecisionSlots = [];
+        DecisionSlots.Add(new DecisionSlotDto()
+        {
+            Id = Guid.NewGuid(),
+            Description = "Wybierz quest, który chcesz rozpocząć",
+            AvailableActions = AvailableActions
+        });
     }
 }
 public class CombatContext : GameStateContext
 {
     public override string Type { get; init; }
-    public override List<ActionDto> AvailableActions { get; init; }
+    public override List<DecisionSlotDto> DecisionSlots { get; init; }
 
     [JsonInclude]
     internal Quest Quest { get; }
 
-    public override GameStateContext Apply(Guid guid)
+    public override GameStateContext Apply(Dictionary<Guid, Guid> chosenActions)
     {
-        if (AvailableActions.Any(a => a.Id == guid))
-        {
-            return new QuestResultContext();
-        }
-        else
-        {
-            throw new ArgumentOutOfRangeException(nameof(guid));
-        }
+        return new QuestResultContext();
     }
 
     [JsonConstructor]
     internal CombatContext(Quest quest)
     {
-        Type = string.Empty;
-        AvailableActions = [];
-
         Quest = quest;
 
+        Type = string.Empty;
+
+        List<ActionDto> AvailableActions = [];
         AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 1" });
         AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 2" });
+
+        DecisionSlots = [];
+        DecisionSlots.Add(new DecisionSlotDto()
+        {
+            Id = Guid.NewGuid(),
+            Description = "Wybierz atak, który chcesz przeprowadzić",
+            AvailableActions = AvailableActions
+        });
     }
 }
 public class QuestResultContext : GameStateContext
 {
     public override string Type { get; init; }
-    public override List<ActionDto> AvailableActions { get; init; }
+    public override List<DecisionSlotDto> DecisionSlots { get; init; }
 
-    public override GameStateContext Apply(Guid guid)
+    public override GameStateContext Apply(Dictionary<Guid, Guid> chosenActions)
     {
-        if (AvailableActions.Any(a => a.Id == guid))
-        {
-            return new QuestChoiceContext();
-        }
-        else
-        {
-            throw new ArgumentOutOfRangeException(nameof(guid));
-        }
+        return new QuestChoiceContext();
     }
 
     public QuestResultContext()
     {
         Type = string.Empty;
-        AvailableActions = [];
+        List<ActionDto> AvailableActions = [];
 
         AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Dalej" });
+
+        DecisionSlots = [];
+        DecisionSlots.Add(new DecisionSlotDto()
+        {
+            Id = Guid.NewGuid(),
+            Description = "Quest zakończony",
+            AvailableActions = AvailableActions
+        });
     }
 }
