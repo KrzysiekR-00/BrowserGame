@@ -52,6 +52,9 @@ public class GameStateController : ControllerBase
             case CombatContext:
                 context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
                 break;
+            case QuestResultContext:
+                context = new QuestResultContextDto() { Test3 = "Quest zakończony" };
+                break;
             default:
                 throw new NotImplementedException();
         }
@@ -96,6 +99,9 @@ public class GameStateController : ControllerBase
                 break;
             case CombatContext:
                 context = new CombatContextDto() { Test2 = "Wybierz atak, który chcesz przeprowadzić" };
+                break;
+            case QuestResultContext:
+                context = new QuestResultContextDto() { Test3 = "Quest zakończony" };
                 break;
             default:
                 throw new NotImplementedException();

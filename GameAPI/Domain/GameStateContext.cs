@@ -62,7 +62,14 @@ public class CombatContext : GameStateContext
 
     public override GameStateContext Apply(Guid guid)
     {
-        return this;
+        if (AvailableActions.Any(a => a.Id == guid))
+        {
+            return new QuestResultContext();
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(guid));
+        }
     }
 
     [JsonConstructor]
@@ -84,12 +91,21 @@ public class QuestResultContext : GameStateContext
 
     public override GameStateContext Apply(Guid guid)
     {
-        return this;
+        if (AvailableActions.Any(a => a.Id == guid))
+        {
+            return new QuestChoiceContext();
+        }
+        else
+        {
+            throw new ArgumentOutOfRangeException(nameof(guid));
+        }
     }
 
     public QuestResultContext()
     {
         Type = string.Empty;
         AvailableActions = [];
+
+        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Dalej" });
     }
 }
