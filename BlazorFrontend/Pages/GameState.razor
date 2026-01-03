@@ -43,7 +43,7 @@ else
         @foreach (var d in p.AvailableActions)
         {
             <p>
-                <button class="btn btn-primary" @onclick="() => Decision(d.Id)">@d.Id - @d.Description</button>
+                <button class="btn btn-primary" @onclick="() => Decision(p.Id, d.Id)">@d.Id - @d.Description</button>
             </p>
         }
     }
@@ -65,15 +65,18 @@ else
         }
     }
 
-    private async Task Decision(Guid decision)
+    private async Task Decision(Guid slot, Guid decision)
     {
-        // var response = await Http.PostAsJsonAsync("api/gameState/decision", decision);
+        DecisionRequestDto dto = new();
+        dto.ChosenActions.Add(slot, decision);
 
-        // if (response.IsSuccessStatusCode)
-        // {
-        //     var newState = await response.Content.ReadFromJsonAsync<GameStateDto>();
+        var response = await Http.PostAsJsonAsync("api/gameState/decision", dto);
 
-        //     gameState = newState;
-        // }
+        if (response.IsSuccessStatusCode)
+        {
+            var newState = await response.Content.ReadFromJsonAsync<GameStateDto>();
+
+            gameState = newState;
+        }
     }
 }

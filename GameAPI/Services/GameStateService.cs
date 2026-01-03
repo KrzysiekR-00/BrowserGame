@@ -26,8 +26,10 @@ public class GameStateService
     {
         var state = GetState(characterId);
 
-        if (state.DecisionSlots.All(d => decisionRequestDto.ChosenActions.ContainsKey(d.Id)) ||
-           decisionRequestDto.ChosenActions.All(a => state.DecisionSlots.FirstOrDefault(d => d.Id == a.Key)?.AvailableActions.Any(aa => aa.Id == a.Value) == true))
+        var hasAllRequiredSlots = state.DecisionSlots.All(d => decisionRequestDto.ChosenActions.ContainsKey(d.Id));
+        var allDecisionsValid = decisionRequestDto.ChosenActions.All(a => state.DecisionSlots.FirstOrDefault(d => d.Id == a.Key)?.AvailableActions.Any(aa => aa.Id == a.Value) == true);
+
+        if (!hasAllRequiredSlots || !allDecisionsValid)
         {
             throw new ArgumentOutOfRangeException(nameof(decisionRequestDto));
         }
