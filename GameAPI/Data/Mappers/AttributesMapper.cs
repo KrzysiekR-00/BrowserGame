@@ -1,4 +1,4 @@
-﻿using GameAPI.Models;
+﻿using GameAPI.Data.Models;
 using Shared.Characters;
 
 namespace GameAPI.Data.Mappers;

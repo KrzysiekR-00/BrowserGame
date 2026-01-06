@@ -1,6 +1,6 @@
 ﻿using GameAPI.Data;
+using GameAPI.Data.Models;
 using GameAPI.Domain;
-using GameAPI.Models;
 using Shared.Characters;
 using System.Text.Json;
 

@@ -1,4 +1,4 @@
-﻿using GameAPI.Models;
+﻿using GameAPI.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameAPI.Data;
