@@ -13,12 +13,4 @@ public class CharacterController : ControllerBase
     {
         _characterService = characterService;
     }
-
-    //[Authorize]
-    //[HttpGet("profile")]
-    //public IActionResult GetProfile()
-    //{
-    //    var username = User.Identity?.Name;
-    //    return Ok(new { Username = username });
-    //}
 }

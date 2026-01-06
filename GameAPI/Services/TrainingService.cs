@@ -28,7 +28,7 @@ public class TrainingService
             .ToArray();
     }
 
-    internal CharacterScheduledTrainingDto StartTraining(Shared.Characters.AttributeDto attribute, int characterId)
+    internal CharacterScheduledTrainingDto StartTraining(Shared.Characters.AttributeType attribute, int characterId)
     {
         var scheduledTraining = GetScheduledTraining(characterId);
         if (scheduledTraining.Length > 0)
@@ -36,7 +36,7 @@ public class TrainingService
             return scheduledTraining.First();
         }
 
-        _db.ScheduledAttributeChanges.Add(new Models.ScheduledAttributeChange
+        _db.ScheduledAttributeChanges.Add(new Data.Models.ScheduledAttributeChange
         {
             CharacterId = characterId,
             AttributeChange = 1,

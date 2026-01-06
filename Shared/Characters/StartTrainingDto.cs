@@ -1,5 +1,5 @@
 ﻿namespace Shared.Characters;
 public class StartTrainingDto
 {
-    public Shared.Characters.AttributeDto Attribute { get; set; }
+    public Shared.Characters.AttributeType Attribute { get; set; }
 }

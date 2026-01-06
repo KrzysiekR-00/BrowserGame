@@ -29,22 +29,10 @@ public class CharacterService
 
         _db.SaveChanges();
 
-        //_db.CharactersAttributes.Add(new CharacterAttributes
-        //{
-        //    CharacterId = character.Id,
-        //    AttributesCsv = new Shared.Characters.Attributes(1, 2, 3).ToCsv()
-        //});
-
-        //_db.SaveChanges();
-
         var initialState = new QuestChoiceContext()
         {
             Type = "test1",
-            //AvailableActions = new List<Shared.State.ActionDto>()
         };
-        //initialState.AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "decision 1" });
-        //initialState.AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "decision 2" });
-        //initialState.AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "decision 3" });
 
         CharacterState state = new CharacterState();
         state.CharacterId = character.Id;

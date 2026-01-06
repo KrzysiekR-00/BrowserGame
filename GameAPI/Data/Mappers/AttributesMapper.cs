@@ -9,7 +9,7 @@ internal static class AttributesMapper
     {
         var dto = new AttributesDto();
 
-        var attributes = Enum.GetValues<Shared.Characters.AttributeDto>();
+        var attributes = Enum.GetValues<Shared.Characters.AttributeType>();
         foreach (var attribute in attributes)
         {
             var value = characterAttributes
