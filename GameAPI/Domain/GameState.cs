@@ -2,13 +2,6 @@
 
 namespace GameAPI.Domain;
 
-//public abstract class GameState
-//{
-//    public abstract string Type { get; }
-//    public abstract IEnumerable<ActionDto> GetAvailableDecisions();
-//    public abstract GameState Apply(ActionDto decision);
-//}
-
 public class GameState
 {
     public string Type { get; init; } = default!;

@@ -1,5 +1,5 @@
 ﻿namespace Shared.Characters;
-public enum AttributeDto
+public enum AttributeType
 {
     AreaAttack,
     RapidAttack,

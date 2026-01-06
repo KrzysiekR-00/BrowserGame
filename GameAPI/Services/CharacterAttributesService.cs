@@ -13,14 +13,6 @@ public class CharacterAttributesService
         _db = db;
     }
 
-    //public Attributes GetAttributes(int userId)
-    //{
-    //    var characterAttributes = _db.CharactersAttributes.Where(u => u.CharacterId == userId).ToArray();
-
-
-    //    return _db.CharactersAttributes.FirstOrDefault(u => u.CharacterId == userId)?.AttributesCsv.ToAttributes() ?? new Attributes();
-    //}
-
     public AttributesDto GetAttributes(int characterId)
     {
         var characterAttributes = _db.CharactersAttributes
@@ -63,7 +55,7 @@ public class CharacterAttributesService
         }
         else
         {
-            _db.CharactersAttributes.Add(new Models.CharacterAttribute
+            _db.CharactersAttributes.Add(new Data.Models.CharacterAttribute
             {
                 CharacterId = characterId,
                 AttributeId = attributeId,
