@@ -43,13 +43,12 @@ public class QuestChoiceContext : GameStateContext
     {
         Type = string.Empty;
 
-        List<ActionDto> AvailableActions = [];
-
         AvailableQuests = new QuestsGenerator().GetAvailableQuests();
 
+        List<ActionDto> availableActions = [];
         foreach (var quest in AvailableQuests)
         {
-            AvailableActions.Add(
+            availableActions.Add(
                 new ActionDto
                 {
                     Id = Guid.NewGuid(),
@@ -63,7 +62,7 @@ public class QuestChoiceContext : GameStateContext
         {
             Id = Guid.NewGuid(),
             Description = "Wybierz quest, który chcesz rozpocząć",
-            AvailableActions = AvailableActions
+            AvailableActions = availableActions
         });
     }
 }
@@ -87,16 +86,28 @@ public class CombatContext : GameStateContext
 
         Type = string.Empty;
 
-        List<ActionDto> AvailableActions = [];
-        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 1" });
-        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 2" });
+        List<ActionDto> availableMovementActions = [];
+        availableMovementActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Ruch 1" });
+        availableMovementActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Ruch 2" });
+        availableMovementActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Ruch 3" });
+
+        List<ActionDto> availableAttackActions = [];
+        availableAttackActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 1" });
+        availableAttackActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 2" });
+        availableAttackActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Atak 3" });
 
         DecisionSlots = [];
         DecisionSlots.Add(new DecisionSlotDto()
         {
             Id = Guid.NewGuid(),
             Description = "Wybierz atak, który chcesz przeprowadzić",
-            AvailableActions = AvailableActions
+            AvailableActions = availableAttackActions
+        });
+        DecisionSlots.Add(new DecisionSlotDto()
+        {
+            Id = Guid.NewGuid(),
+            Description = "Wybierz ruch, który chcesz wykonać",
+            AvailableActions = availableMovementActions
         });
     }
 }
@@ -113,16 +124,16 @@ public class QuestResultContext : GameStateContext
     public QuestResultContext()
     {
         Type = string.Empty;
-        List<ActionDto> AvailableActions = [];
 
-        AvailableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Dalej" });
+        List<ActionDto> availableActions = [];
+        availableActions.Add(new ActionDto { Id = Guid.NewGuid(), Description = "Dalej" });
 
         DecisionSlots = [];
         DecisionSlots.Add(new DecisionSlotDto()
         {
             Id = Guid.NewGuid(),
             Description = "Quest zakończony",
-            AvailableActions = AvailableActions
+            AvailableActions = availableActions
         });
     }
 }
