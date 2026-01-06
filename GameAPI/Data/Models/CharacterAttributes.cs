@@ -1,4 +1,4 @@
-﻿namespace GameAPI.Models;
+﻿namespace GameAPI.Data.Models;
 
 public class CharacterAttribute
 {
