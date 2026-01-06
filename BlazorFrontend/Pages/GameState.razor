@@ -36,21 +36,23 @@ else
             break;
     }
 
-    @foreach (var p in @gameState.DecisionSlots)
+    @if (@gameState.DecisionSlots.Count > decisionRequest.ChosenActions.Count)
     {
-        <p>@p.Id</p>
-        <p>@p.Description</p>
-        @foreach (var d in p.AvailableActions)
+        <p>@gameState.DecisionSlots[decisionRequest.ChosenActions.Count].Id</p>
+        <p>@gameState.DecisionSlots[decisionRequest.ChosenActions.Count].Description</p>
+        @foreach (var d in @gameState.DecisionSlots[decisionRequest.ChosenActions.Count].AvailableActions)
         {
             <p>
-                <button class="btn btn-primary" @onclick="() => Decision(p.Id, d.Id)">@d.Id - @d.Description</button>
+                <button class="btn btn-primary" @onclick="() => Decision(d.Id)">@d.Id - @d.Description</button>
             </p>
         }
     }
 }
 
 @code {
+
     private GameStateDto? gameState;
+    private DecisionRequestDto decisionRequest = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,21 +64,26 @@ else
         {
             var response = await Http.GetFromJsonAsync<GameStateDto>("api/gameState/gameState");
             gameState = response;
+            decisionRequest = new();
         }
     }
 
-    private async Task Decision(Guid slot, Guid decision)
+    private async Task Decision(Guid decision)
     {
-        DecisionRequestDto dto = new();
-        dto.ChosenActions.Add(slot, decision);
+        Guid slot = gameState.DecisionSlots[decisionRequest.ChosenActions.Count].Id;
 
-        var response = await Http.PostAsJsonAsync("api/gameState/decision", dto);
+        decisionRequest.ChosenActions.Add(slot, decision);
 
-        if (response.IsSuccessStatusCode)
+        if (decisionRequest.ChosenActions.Count == gameState.DecisionSlots.Count)
         {
-            var newState = await response.Content.ReadFromJsonAsync<GameStateDto>();
+            var response = await Http.PostAsJsonAsync("api/gameState/decision", decisionRequest);
 
-            gameState = newState;
+            if (response.IsSuccessStatusCode)
+            {
+                var newState = await response.Content.ReadFromJsonAsync<GameStateDto>();
+                gameState = newState;
+                decisionRequest = new();
+            }
         }
     }
 }
