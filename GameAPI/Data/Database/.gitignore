@@ -1,0 +1,3 @@
+# Ignore local SQLite database files in this folder.
+*
+!/.gitignore
